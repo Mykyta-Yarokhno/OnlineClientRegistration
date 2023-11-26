@@ -1,0 +1,21 @@
+﻿@page
+@model CreateModel
+@{
+}
+
+<h2>Добавление новой записи</h2>
+<form method="post">
+    <p>
+        <label>Дата и время</label><br />
+        <input name="dateandtime" type="datetime" value="@DateTime.Now.AddDays(1)"/>
+    </p>
+    <p>
+        <label>Услуги</label><br/>
+        <input name="servicename" type="text" value="@Model.context.ServicesTypes.FirstOrDefault()?.Name" />
+    </p>
+    <p>
+        <label>Информация о клиенте</label><br />
+        <input name="phonenumber" type="text" value="@Model.context.Clients.FirstOrDefault()?.PhoneNumber" />
+    </p>
+    <input type="submit" value="Отправить" />
+</form>

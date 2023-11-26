@@ -1,0 +1,14 @@
+﻿@page
+@model OnlineClientRegistration.Pages.Testing.PrintModel
+@{
+}
+
+<h2>Список записей</h2>
+<p><a href="/Create">Добавить запись</a></p>
+<table>
+    <tr><th>Дата и время</th><th>Услуги</th><th>Номер телефона</th></tr>
+    @foreach (var record in Model.Records)
+    {
+        <tr><td>@record.DateAndTime</td><td>@record.ServicesRequested?.FirstOrDefault()?.Name</td><td>@record.ClientInfo?.PhoneNumber</td></tr>
+    }
+</table>

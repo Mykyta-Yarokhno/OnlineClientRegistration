@@ -5,8 +5,8 @@ namespace OnlineClientRegistration.DataModels
     public class Client
     {
         [Key]
-        public string PhoneNumber { get; set; }
-        public string Name { get; set; }
+        public  required string PhoneNumber { get; set; } 
+        public  required string Name { get; set; } 
 
 
     }
