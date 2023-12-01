@@ -1,48 +1,61 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc;
 using OnlineClientRegistration.DataModels;
-using System.Globalization;
-using System.Net.WebSockets;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineClientRegistration.Pages.Testing
 {
     [IgnoreAntiforgeryToken]
     public class CreateModel : PageModel
     {
-        internal ApplicationDbContext context;
-        [BindProperty]
-        public DateTime DateAndTime { get; set; }
-        [BindProperty]
-        public string ServiceName { get; set; }
-        [BindProperty]
-        public string PhoneNumber { get; set; }
-        
+        private readonly ApplicationDbContext _context;
+
         public CreateModel(ApplicationDbContext db)
         {
-            context = db;
+            _context = db;
         }
+
+        [BindProperty]
+        public Record NewRecord { get; set; }
+        public SelectList ServiceSelectList { get; set; }
+        public SelectList ChoosenServices { get; set; }
+        [BindProperty]
+        public DateOnly Date { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var serviceTypes = await _context.ServiceTypes.ToListAsync();
+            ServiceSelectList = new SelectList(serviceTypes, nameof(ServiceType.Id), nameof(ServiceType.Name));
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
-            var serviceType = context.ServicesTypes.FirstOrDefault(service => service.Name == ServiceName);
-
-            if (serviceType == null)
+            if (ModelState.IsValid)
+            {
+                
+            }
+            else
+            {
+                var serviceTypes = await _context.ServiceTypes.ToListAsync();
+                ServiceSelectList = new SelectList(serviceTypes, nameof(ServiceType.Id), nameof(ServiceType.Name));
                 return Page();
+            }
 
-            var clientInfo = context.Clients.FirstOrDefault(phoneNumber => phoneNumber.PhoneNumber == PhoneNumber);
+            var selectedServiceTypeIds = Request.Form["NewRecord.ServicesRequested"];
 
-            if (clientInfo == null)
-                return Page();
+            var selectedServiceTypes = _context.ServiceTypes
+                .Where(st => selectedServiceTypeIds.Contains(st.Id.ToString()))
+                .ToList();
 
+            NewRecord.ServicesRequested = selectedServiceTypes;
 
-            var record = new Record() {
-                DateAndTime = DateAndTime,
-                ServicesRequested = [serviceType],
-                ClientInfo = clientInfo
-            };
+            _context.Records.Add(NewRecord);
+            await _context.SaveChangesAsync();
 
-            context.Records.Add(record);
-            await context.SaveChangesAsync();
-            return RedirectToPage("Print");
+            return RedirectToPage("/Testing/Print");
         }
     }
 }

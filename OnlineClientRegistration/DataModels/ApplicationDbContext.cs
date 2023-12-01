@@ -8,7 +8,7 @@ namespace OnlineClientRegistration.DataModels
         public DbSet<Record> Records => Set<Record>();
         public DbSet<TimeTable> TimeTables => Set<TimeTable>();
         public DbSet<CompletedRecord> CompletedRecords => Set<CompletedRecord>();
-        public DbSet<ServiceType> ServicesTypes => Set<ServiceType>();
+        public DbSet<ServiceType> ServiceTypes => Set<ServiceType>();
         public DbSet<CustomTime> CustomTimes => Set<CustomTime>();
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -33,10 +33,6 @@ namespace OnlineClientRegistration.DataModels
                 new ServiceType { Id = 13, Name = "Педікюр повний (без покриття)", TimeRequired = 300, Price = 500 },
                 new ServiceType { Id = 14, Name = "Педікюр повний (зняття + покриття)", TimeRequired = 300, Price = 600 },
                 new ServiceType { Id = 15, Name = "Педікюр пальців (зняття + покриття)", TimeRequired = 300, Price = 400 }
-                );
-
-            modelBuilder.Entity<Client>().HasData(
-                new Client { Name = "Elixabeth", PhoneNumber ="000000000" }
                 );
         }
     }

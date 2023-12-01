@@ -9,7 +9,5 @@ namespace OnlineClientRegistration.DataModels
         public DateTime DateAndTime { get; set; }
         public required List<ServiceType> ServicesRequested { get; set; } 
         public required Client ClientInfo { get; set; }
-
-
     }
 }
