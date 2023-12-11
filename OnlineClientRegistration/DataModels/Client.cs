@@ -6,7 +6,6 @@ namespace OnlineClientRegistration.DataModels
     {
         [Key]
         public required string PhoneNumber { get; set; }
-        [Required(ErrorMessage = "Обов'язкове поле")]
         public  required string Name { get; set; } 
 
     }

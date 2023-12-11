@@ -3,89 +3,118 @@
 @{
 }
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<!DOCTYPE html>
 
-<div align ="center">
-    <h2 >Добавление новой записи</h2>
-    <form method="post">
-        <p>
-            <label>Ім'я</label><br />
-            <input asp-for="NewRecord.ClientInfo.Name" />
-            <span asp-validation-for="NewRecord.ClientInfo.Name" class="text-danger"></span>
-        </p>
-        <p>
-            <label for="datepicker">Дата</label><br />
-            <input type="text" id="datepicker" class="form-control" />
-        </p>
-        <p>
-            <label>Номер телефону</label><br />
-            <input asp-for="NewRecord.ClientInfo.PhoneNumber" />
-        </p>
-        <p>
-            <label>Дата та час</label><br />
-            <input asp-for="NewRecord.DateAndTime" />
-        </p>
-        <p>
-            <label class="control-label">Послуги</label><br />
-            <select asp-for="NewRecord.ServicesRequested" asp-items="Model.ServiceSelectList" onchange="SelectService(this)"  class="form-control-lg"></select>
-        </p>
-        <p >
-            <label class="control-label">Обрані послуги</label><br />
-            <select asp-for="NewRecord.ServicesRequested" asp-items="Model.ChoosenServices" class="form-control-lg" id="ChoosenServices"></select>
-        </p>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+    <body>
 
-        <input type="submit" value="Отправить" />
-    </form>
-</div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.css" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.js" type="text/javascript"></script>
 
-<script>
-    function SelectService(service)
-    {
-        var selectedService = service.selectedOptions[0];
-        document.getElementById('ChoosenServices').add(selectedService);
-    }
-</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js"></script>
 
-<script>
-    $(document).ready(function () {
-        $('#datepicker').datepicker({
-            format: 'yyyy-mm-dd', // Формат даты
-            todayHighlight: true,  // Подсвечивать текущую дату
-            autoclose: true        // Закрывать календарь при выборе даты
-        });
-    });
-</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <div align ="center">
+        <h2 >Запис</h2>
+        <form method="post">
+            <div>
+                <label>Номер телефону</label><br />
+                <input asp-for="NewRecord.ClientInfo.PhoneNumber" type="tel" id="phoneNumberInput" onchange="validatePhoneNumber(this.value);"  required /><br />
+                
+                <label>Ім'я</label><br />
+                <input asp-for="NewRecord.ClientInfo.Name" type="text" id="nameInput" onchange="validateFields();" required />
+            </div>
+            <script>
+                function validatePhoneNumber(phoneNumber)
+                {
+                    var regex = /^\+38[0-9]{10}$/;
 
-<!--
-<script>
-    // Додаємо обробник події для події зміни вмісту комбобоксу
-    document.getElementById('servicesSelect').addEventListener('change', function () {
-        // Перевіряємо, чи вибрано хоча б одну послугу
-        var selectedServices = document.getElementById('servicesSelect').selectedOptions;
-        if (selectedServices.length > 0) {
-            // Клонуємо перший комбобокс
-            var firstServiceSelect = document.getElementById('servicesSelect');
-            var clonedServiceSelect = firstServiceSelect.cloneNode(true);
+                    if (!regex.test(phoneNumber)) 
+                    {
+                        alert('Некорректный формат номера телефона Украины! Пожалуйста, введите номер в формате +38XXXXXXXXXX');
+                        document.getElementById('phoneNumberInput').value = '+38';
+                    }
 
-            // Змінюємо ID клонованого комбобоксу, щоб він був унікальним
-            clonedServiceSelect.id = 'secondServiceSelect';
+                    return regex.test(phoneNumber);
+                }
+                function validateFields() 
+                {
+                    var phoneNumber = document.getElementById('phoneNumberInput').value;
+                    var name = document.getElementById('nameInput').value;
 
-            // Очищаємо попередній вміст контейнера та додаємо клонований комбобокс
-            var secondServiceSelectContainer = document.getElementById('secondServiceSelectContainer');
-            secondServiceSelectContainer.innerHTML = '';
-            secondServiceSelectContainer.appendChild(clonedServiceSelect);
 
-            // Відображаємо другий комбобокс
-            secondServiceSelectContainer.style.display = 'block';
-        } else {
-            // Якщо не вибрано жодної послуги, приховуємо другий комбобокс
-            document.getElementById('secondServiceSelectContainer').style.display = 'none';
-        }
-    });
-</script>
--->
+                    if (validatePhoneNumber(phoneNumber) && name.trim() !== '') {
+                       
+                        document.getElementById('servicesBlock').removeAttribute('hidden');
+                    }
+                    else if (name.trim() === '') {
+                        alert('Пожалуйста, введите имя');
+                    }
+                }
+
+            </script>
+            <div id="servicesBlock" hidden>
+                <div >
+                    <label class="control-label">Послуги</label><br />
+                    <select asp-items="Model.ServiceSelectList" class="form-control" onchange="SelectService(this); $('#dateBlock').attr('hidden',false)" id="ServicesToChoose" multiple></select><br />
+
+                    <label class="control-label">Обрані послуги</label><br />
+                    <select asp-for="NewRecord.ServicesRequested" asp-items="Model.ChoosenServices" class="form-control" onchange="if(UnselectService(this) == true) {$('#dateBlock').attr('hidden',true); $('#timeBlock').attr('hidden',true); $('#submitButton').attr('hidden',true);}" id="ChoosenServices"><option style="display:none"></option></select>
+                </div>
+            </div>
+            <div id = "dateBlock" hidden>
+                <label>Дата</label><br />
+                <input asp-for="DateSelected" id="txtSelectedDate" onchange="$('#timeBlock').attr('hidden',false)" onclick="sendData();" />
+                <script>
+                    $(function () {
+                        $('#txtSelectedDate').datepicker({
+                            changeMonth: true,
+                            changeYear: false,
+                            format: "dd/mm/yyyy",
+                            language: "tr",
+                            datesDisabled: ['25/12/2023', '25/12/2023'],
+                            daysOfWeekDisabled: [0, 6]
+                        });
+                    });
+                </script>
+                <script>
+                    function sendData() {
+                        $.ajax({
+                            type: "GET",
+                            url: "/api/RecordsController/disabledDates",
+                            headers: {
+                                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (result) {
+                                $('#txtSelectedDate').datesDisabled = result;
+                            },
+                            error: function () {
+                                alert("there was an error");
+                            }
+                        })
+                    }
+                </script>
+            </div>
+            <div id="timeBlock" hidden>
+                <label>Час</label><br />
+                <select asp-for="TimeSelected" id="txtSelectedTime" asp-items="Model.AvailableTimeRanges" onchange="$('#submitButton').attr('hidden',false)" />
+            </div>
+                <input type="submit" value="Підтвердити" id="submitButton" hidden />
+
+            @if (!string.IsNullOrEmpty(Model.NewRecord?.ClientInfo?.PhoneNumber))
+            {
+                <script>
+                    document.getElementById('servicesBlock').removeAttribute('hidden');
+                </script>
+            }
+        </form>
+    </div>
+    </body>
+</html>
+
