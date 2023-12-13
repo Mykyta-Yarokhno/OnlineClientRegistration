@@ -10,6 +10,8 @@ namespace OnlineClientRegistration.DataModels
         public DbSet<CompletedRecord> CompletedRecords => Set<CompletedRecord>();
         public DbSet<ServiceType> ServiceTypes => Set<ServiceType>();
         public DbSet<CustomTime> CustomTimes => Set<CustomTime>();
+        public DbSet<CustomDate> CustomDates => Set<CustomDate>();
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

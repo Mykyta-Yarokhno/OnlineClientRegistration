@@ -7,11 +7,10 @@ namespace OnlineClientRegistration.Controllers
     [ApiController]
     public class RecordsController : ControllerBase
     {
-        [HttpGet]
-        [Route("disabledDates")]
+        [HttpGet("disabledDates")]
         public IActionResult GetDisabledDates()
         {
-            string[] dates = ["11/12/2023", "12/12/2023"];
+            string[] dates = { "14/12/2023", "15/12/2023" };
 
             return Ok(dates);
         }

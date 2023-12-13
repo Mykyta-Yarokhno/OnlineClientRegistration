@@ -11,7 +11,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -24,8 +24,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+app.UseDefaultFiles();
 app.UseStaticFiles();
+
+app.UseHttpsRedirection();
 
 app.UseRouting();
 

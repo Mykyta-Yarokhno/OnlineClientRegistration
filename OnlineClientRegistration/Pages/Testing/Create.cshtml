@@ -78,8 +78,9 @@
                             changeYear: false,
                             format: "dd/mm/yyyy",
                             language: "tr",
-                            datesDisabled: ['25/12/2023', '25/12/2023'],
-                            daysOfWeekDisabled: [0, 6]
+                            daysOfWeekDisabled: [0, 6],
+                            startDate: "now",
+                            endDate: "+1m"
                         });
                     });
                 </script>
@@ -87,12 +88,12 @@
                     function sendData() {
                         $.ajax({
                             type: "GET",
-                            url: "/api/RecordsController/disabledDates",
+                            url: "/api/Records/disabledDates",
                             headers: {
                                 RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
                             },
                             success: function (result) {
-                                $('#txtSelectedDate').datesDisabled = result;
+                                $('#txtSelectedDate').datepicker('setDatesDisabled', result);
                             },
                             error: function () {
                                 alert("there was an error");
