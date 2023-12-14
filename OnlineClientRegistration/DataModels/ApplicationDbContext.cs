@@ -36,6 +36,10 @@ namespace OnlineClientRegistration.DataModels
                 new ServiceType { Id = 14, Name = "Педікюр повний (зняття + покриття)", TimeRequired = 300, Price = 600 },
                 new ServiceType { Id = 15, Name = "Педікюр пальців (зняття + покриття)", TimeRequired = 300, Price = 400 }
                 );
+
+            modelBuilder.Entity<TimeTable>().HasData(
+                new TimeTable {Id = 1, NonWorkingDays="0,3,4", StartWorkingTime = TimeSpan.FromHours(10).Ticks, EndWorkingTime = TimeSpan.FromHours(21).Ticks }
+                );
         }
     }
 }

@@ -78,7 +78,6 @@
                             changeYear: false,
                             format: "dd/mm/yyyy",
                             language: "tr",
-                            daysOfWeekDisabled: [0, 6],
                             startDate: "now",
                             endDate: "+1m"
                         });
@@ -86,14 +85,27 @@
                 </script>
                 <script>
                     function sendData() {
+
+                        var selectedServices = [];
+
+                        $('#ChoosenServices option:selected').each(function (index) {
+                            if(index >0)
+                            {
+                                selectedServices.push($(this).val());
+                            }
+                        });
+
+                        var params = selectedServices.map(service => 'selectedServices=' + encodeURIComponent(service)).join('&');
+
                         $.ajax({
                             type: "GET",
-                            url: "/api/Records/disabledDates",
+                            url: "/api/Records/disabledDates?" + params,
                             headers: {
                                 RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
                             },
                             success: function (result) {
-                                $('#txtSelectedDate').datepicker('setDatesDisabled', result);
+                                $('#txtSelectedDate').datepicker('setDaysOfWeekDisabled', result.days);
+                                $('#txtSelectedDate').datepicker('setDatesDisabled', result.dates);
                             },
                             error: function () {
                                 alert("there was an error");
@@ -104,7 +116,7 @@
             </div>
             <div id="timeBlock" hidden>
                 <label>Час</label><br />
-                <select asp-for="TimeSelected" id="txtSelectedTime" asp-items="Model.AvailableTimeRanges" onchange="$('#submitButton').attr('hidden',false)" />
+                <select asp-for="TimeSelected" id="txtSelectedTime" asp-items="Model.AvailableTimeRanges" onchange="$('#submitButton').attr('hidden',false)" value ="now" />
             </div>
                 <input type="submit" value="Підтвердити" id="submitButton" hidden />
 

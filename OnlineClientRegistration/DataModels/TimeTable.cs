@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnlineClientRegistration.DataModels
 {
-    [Keyless]
     public class TimeTable
     {
+        public int Id { get; set; }
         public string? NonWorkingDays { get; set; }
-        public int StartWorkingTime { get; set; }
-        public int WorkingHours { get; set; }
+        public long StartWorkingTime { get; set; }
+        public long EndWorkingTime { get; set; }
+        //public long WorkingHours { get; set; }
     }
 }

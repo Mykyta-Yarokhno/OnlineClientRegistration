@@ -1,12 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OnlineClientRegistration.DataModels;
+using OnlineClientRegistration.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(
     builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<TimeTableService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
