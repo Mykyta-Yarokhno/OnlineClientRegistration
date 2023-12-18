@@ -72,18 +72,59 @@
                 <label>Дата</label><br />
                 <input asp-for="DateSelected" id="txtSelectedDate" onchange="$('#timeBlock').attr('hidden',false)" onclick="sendData();" />
                 <script>
+                    function formatDate(date) {
+
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+
+                        if (day < 10) {
+                            day = '0' + day;
+                        }
+                        if (month < 10) {
+                            month = '0' + month;
+                        }
+
+                        return day + '.' + month + '.' + year;
+                    }
+
+                    var datesConfiguration;
+                    var disabledDaysArray = [];
+
                     $(function () {
                         $('#txtSelectedDate').datepicker({
                             changeMonth: true,
                             changeYear: false,
-                            format: "dd/mm/yyyy",
-                            language: "tr",
+                            format: "dd.mm.yyyy",
                             startDate: "now",
-                            endDate: "+1m"
+                            endDate: "+1m",
+                            onChangeMonthYear: function (year, month, inst) {
+                                $(this).datepicker("setDate", month + '/1/' + year);
+                            },
+                            beforeShowDay: function (date) {
+
+                                if (datesConfiguration == null) return true;
+
+                                var dayOfWeek = date.getDay();
+                                var dateString = formatDate(date);
+
+                                if (datesConfiguration.openDates.includes(dateString)) {
+                                    return true;
+                                }
+
+                                if (disabledDaysArray.includes(dayOfWeek)) {
+                                    return false;
+                                }
+
+                                if (datesConfiguration.dates.includes(dateString)) {
+                                    return false;
+                                }
+
+                                return true;
+                            }
                         });
                     });
-                </script>
-                <script>
+
                     function sendData() {
 
                         var selectedServices = [];
@@ -93,7 +134,7 @@
                             {
                                 selectedServices.push($(this).val());
                             }
-                        });
+                        }); 
 
                         var params = selectedServices.map(service => 'selectedServices=' + encodeURIComponent(service)).join('&');
 
@@ -104,8 +145,12 @@
                                 RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
                             },
                             success: function (result) {
-                                $('#txtSelectedDate').datepicker('setDaysOfWeekDisabled', result.days);
-                                $('#txtSelectedDate').datepicker('setDatesDisabled', result.dates);
+                                datesConfiguration = result;
+                                disabledDaysArray = datesConfiguration.days.split(',').map(Number);
+                  
+
+                                $('#txtSelectedDate').datepicker("setDate", "01.12.2023");
+                                $('#txtSelectedDate').datepicker("setDate", "");
                             },
                             error: function () {
                                 alert("there was an error");

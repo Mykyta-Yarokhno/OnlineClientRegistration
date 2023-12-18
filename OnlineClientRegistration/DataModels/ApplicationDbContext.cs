@@ -40,6 +40,12 @@ namespace OnlineClientRegistration.DataModels
             modelBuilder.Entity<TimeTable>().HasData(
                 new TimeTable {Id = 1, NonWorkingDays="0,3,4", StartWorkingTime = TimeSpan.FromHours(10).Ticks, EndWorkingTime = TimeSpan.FromHours(21).Ticks }
                 );
+
+            modelBuilder.Entity<CustomDate>().HasData(
+                new CustomDate { Date = new DateOnly(2023,12,29), IsWorkingDay = false },
+                new CustomDate { Date = new DateOnly(2023,12,30), IsWorkingDay = false },
+                new CustomDate { Date = new DateOnly(2023,12,28), IsWorkingDay = true }
+                );
         }
     }
 }

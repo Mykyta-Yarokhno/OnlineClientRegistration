@@ -13,21 +13,20 @@ namespace OnlineClientRegistration.Controllers
     public class RecordsController : ControllerBase
     {
         private readonly TimeTableService _timeTableService;
-        private readonly ApplicationDbContext _context;
 
         public RecordsController(ApplicationDbContext context,TimeTableService timeTableService)
         {
             _timeTableService = timeTableService;
-            _context = context;
         }
 
         [HttpGet("disabledDates")]
         public IActionResult GetDisabledDates([FromQuery] List<int> selectedServices)
         {
-            string days = _context.TimeTables.FirstOrDefault().NonWorkingDays;
-            string[] dates = new string[] { };
+            string days = _timeTableService.GetDaysOfWeekDisabled();
+            string[] dates = _timeTableService.GetNonworkingDays(selectedServices);
+            string[] openDates = _timeTableService.GetWorkingDays();
 
-            var result = new { days,dates };
+            var result = new { days,dates,openDates };
             return Ok(result);
         }
     }
