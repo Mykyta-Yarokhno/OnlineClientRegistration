@@ -70,9 +70,9 @@
             </div>
             <div id = "dateBlock" hidden>
                 <label>Дата</label><br />
-                <input asp-for="DateSelected" id="txtSelectedDate" onchange="$('#timeBlock').attr('hidden',false)" onclick="sendData();" />
+                <input asp-for="DateSelected" id="txtSelectedDate" onchange="$('#timeBlock').attr('hidden',false); updateTimes(this.value);" onclick="sendData();" />
                 <script>
-                    function formatDate(date) {
+                    function formatDate(date) { 
 
                         var day = date.getDate();
                         var month = date.getMonth() + 1;
@@ -161,9 +161,37 @@
             </div>
             <div id="timeBlock" hidden>
                 <label>Час</label><br />
-                <select asp-for="TimeSelected" id="txtSelectedTime" asp-items="Model.AvailableTimeRanges" onchange="$('#submitButton').attr('hidden',false)" value ="now" />
+                <select asp-for="TimeSelected" id="txtSelectedTime" onchange="$('#submitButton').attr('hidden',false)">
+                </select>
+
+                <script>
+                    function updateTimes(selectedDate) {
+                        $.ajax({
+                            type: "GET",
+                            url: "/api/Records/availableTimes?selectedDate=" + encodeURIComponent(selectedDate),
+                            headers: {
+                                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (result) {
+                                let timesList = $('#txtSelectedTime');
+
+                                timesList.empty();
+
+                                result.forEach(function (key) {
+
+                                    timesList.append(new Option(key, key), undefined);
+                                });
+
+                            },
+                            error: function () {
+                                alert("there was an error");
+                            }
+                        })
+                    }
+                </script>
             </div>
-                <input type="submit" value="Підтвердити" id="submitButton" hidden />
+
+            <input type="submit" value="Підтвердити" id="submitButton" hidden />
 
             @if (!string.IsNullOrEmpty(Model.NewRecord?.ClientInfo?.PhoneNumber))
             {

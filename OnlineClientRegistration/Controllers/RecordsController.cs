@@ -14,7 +14,7 @@ namespace OnlineClientRegistration.Controllers
     {
         private readonly TimeTableService _timeTableService;
 
-        public RecordsController(ApplicationDbContext context,TimeTableService timeTableService)
+        public RecordsController(ApplicationDbContext context, TimeTableService timeTableService)
         {
             _timeTableService = timeTableService;
         }
@@ -26,7 +26,15 @@ namespace OnlineClientRegistration.Controllers
             string[] dates = _timeTableService.GetNonworkingDays(selectedServices);
             string[] openDates = _timeTableService.GetWorkingDays();
 
-            var result = new { days,dates,openDates };
+            var result = new { days, dates, openDates };
+            return Ok(result);
+        }
+
+        [HttpGet("availableTimes")]
+        public IActionResult GetAvailableTimes([FromQuery] string selectedDate)
+        {
+            var result = _timeTableService.GetAvailableTimes(DateOnly.Parse(selectedDate));
+
             return Ok(result);
         }
     }
