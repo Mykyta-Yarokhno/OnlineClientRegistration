@@ -14,7 +14,7 @@ namespace OnlineClientRegistration.Controllers
     {
         private readonly TimeTableService _timeTableService;
 
-        public RecordsController(ApplicationDbContext context, TimeTableService timeTableService)
+        public RecordsController(TimeTableService timeTableService)
         {
             _timeTableService = timeTableService;
         }

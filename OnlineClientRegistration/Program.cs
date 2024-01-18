@@ -10,6 +10,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite
     builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<TimeTableService>();
+builder.Services.AddScoped<UserInfoService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

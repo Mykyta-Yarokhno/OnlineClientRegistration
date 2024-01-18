@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineClientRegistration.DataModels;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System;
+using OnlineClientRegistration.Services;
 
 namespace OnlineClientRegistration.Pages.Testing
 {
@@ -11,10 +13,12 @@ namespace OnlineClientRegistration.Pages.Testing
     public class CreateModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserInfoService _userService;
 
-        public CreateModel(ApplicationDbContext db)
+        public CreateModel(ApplicationDbContext db, UserInfoService userService)
         {
             _context = db;
+            _userService = userService;
         }
 
         [BindProperty]
@@ -45,6 +49,14 @@ namespace OnlineClientRegistration.Pages.Testing
                 .ToList();
 
             NewRecord.ServicesRequested = selectedServiceTypes;
+            NewRecord.DateAndTime = new DateTime(DateSelected, TimeSelected);
+
+            var user = _userService.FindUser(NewRecord.ClientInfo.PhoneNumber);
+
+            if(user != null)
+            {
+                NewRecord.ClientInfo = user;
+            }
 
             ChoosenServices = new SelectList(selectedServiceTypes, nameof(ServiceType.Id), nameof(ServiceType.Name));
 

@@ -6,7 +6,7 @@
 <h2>Список записей</h2>
 <p><a href="/Create">Добавить запись</a></p>
 <table class = "table">
-    <tr><th>Дата та час</th><th>Послуги</th><th>Номер телефону</th></tr>
+    <tr><th>Дата та час</th><th>Послуги</th><th>Номер телефону</th><th>Ім'я</th></tr>
     @foreach (var record in Model.Records)
     {
         <tr>
@@ -22,6 +22,7 @@
                 }
             </td>
             <td>@record.ClientInfo?.PhoneNumber</td>
+            <td>@record.ClientInfo?.Name</td>
         </tr>
     }
 </table>

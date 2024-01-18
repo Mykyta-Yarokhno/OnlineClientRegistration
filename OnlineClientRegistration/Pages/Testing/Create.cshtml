@@ -25,23 +25,47 @@
         <form method="post">
             <div>
                 <label>Номер телефону</label><br />
-                <input asp-for="NewRecord.ClientInfo.PhoneNumber" type="tel" id="phoneNumberInput" onchange="validatePhoneNumber(this.value);"  required /><br />
+                <input asp-for="NewRecord.ClientInfo.PhoneNumber" type="tel" id="phoneNumberInput" onchange="onPhoneNumberChanged(this.value);" required /><br />
                 
                 <label>Ім'я</label><br />
                 <input asp-for="NewRecord.ClientInfo.Name" type="text" id="nameInput" onchange="validateFields();" required />
             </div>
             <script>
+                function checkIfUserCreated(phoneNumber) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/api/Users/user?phoneNumber=" + encodeURIComponent(phoneNumber),
+                        headers: {
+                            RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (result, textStatus, jqXHR) {
+
+                            if (jqXHR.status == "204") {
+                                return;
+                            }
+
+                            var retrievedName = result.name;
+                            document.getElementById('nameInput').value = retrievedName;
+                            validateFields();
+
+                        },
+                        error: function () {
+                            alert("there was an error");
+                        }
+                    })
+                }
                 function validatePhoneNumber(phoneNumber)
                 {
                     var regex = /^\+38[0-9]{10}$/;
 
                     if (!regex.test(phoneNumber)) 
                     {
-                        alert('Некорректный формат номера телефона Украины! Пожалуйста, введите номер в формате +38XXXXXXXXXX');
+                        alert('Невірний формат номеру телефона України! Будь ласка, введіть номер телефону у форматі +38XXXXXXXXXX ');
                         document.getElementById('phoneNumberInput').value = '+38';
+                        return false;
                     }
 
-                    return regex.test(phoneNumber);
+                    return true;
                 }
                 function validateFields() 
                 {
@@ -57,7 +81,10 @@
                         alert('Пожалуйста, введите имя');
                     }
                 }
-
+                function onPhoneNumberChanged(phoneNumber) {
+                    validatePhoneNumber(phoneNumber);
+                    checkIfUserCreated(phoneNumber);
+                }
             </script>
             <div id="servicesBlock" hidden>
                 <div >
@@ -70,8 +97,26 @@
             </div>
             <div id = "dateBlock" hidden>
                 <label>Дата</label><br />
-                <input asp-for="DateSelected" id="txtSelectedDate" onchange="$('#timeBlock').attr('hidden',false); updateTimes(this.value);" onclick="sendData();" />
+                <input asp-for="DateSelected" id="txtSelectedDate" onchange="saveSelectedDate(this.value); $('#timeBlock').attr('hidden',false);" onclick="sendData();" />
                 <script>
+                    let savedDate = '';
+
+                    function saveSelectedDate(date) {
+
+                        let parts = date.split(".");
+                        let formattedDate = parts[2] + "-" + parts[1] + "-" + parts[0];
+
+                        let selectedDate = new Date(formattedDate);
+
+                        let currentYear = new Date().getFullYear();
+
+                        let selectedYear = selectedDate.getFullYear();
+
+                        if (selectedYear >= currentYear) {
+                            updateTimes(date);
+                        }
+                    }
+
                     function formatDate(date) { 
 
                         var day = date.getDate();
@@ -149,7 +194,6 @@
                                 disabledDaysArray = datesConfiguration.days.split(',').map(Number);
                   
 
-                                $('#txtSelectedDate').datepicker("setDate", "01.12.2023");
                                 $('#txtSelectedDate').datepicker("setDate", "");
                             },
                             error: function () {
@@ -161,9 +205,7 @@
             </div>
             <div id="timeBlock" hidden>
                 <label>Час</label><br />
-                <select asp-for="TimeSelected" id="txtSelectedTime" onchange="$('#submitButton').attr('hidden',false)">
-                </select>
-
+                <select asp-for="TimeSelected" id="txtSelectedTime" onclick="$('#submitButton').attr('hidden',false);" />
                 <script>
                     function updateTimes(selectedDate) {
                         $.ajax({
