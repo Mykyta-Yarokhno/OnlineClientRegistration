@@ -23,70 +23,11 @@
     <div align ="center">
         <h2 >Запис</h2>
         <form method="post">
-            <div>
-                <label>Номер телефону</label><br />
-                <input asp-for="NewRecord.ClientInfo.PhoneNumber" type="tel" id="phoneNumberInput" onchange="onPhoneNumberChanged(this.value);" required /><br />
-                
-                <label>Ім'я</label><br />
-                <input asp-for="NewRecord.ClientInfo.Name" type="text" id="nameInput" onchange="validateFields();" required />
-            </div>
-            <script>
-                function checkIfUserCreated(phoneNumber) {
-                    $.ajax({
-                        type: "GET",
-                        url: "/api/Users/user?phoneNumber=" + encodeURIComponent(phoneNumber),
-                        headers: {
-                            RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
-                        },
-                        success: function (result, textStatus, jqXHR) {
-
-                            if (jqXHR.status == "204") {
-                                return;
-                            }
-
-                            var retrievedName = result.name;
-                            document.getElementById('nameInput').value = retrievedName;
-                            validateFields();
-
-                        },
-                        error: function () {
-                            alert("there was an error");
-                        }
-                    })
-                }
-                function validatePhoneNumber(phoneNumber)
-                {
-                    var regex = /^\+38[0-9]{10}$/;
-
-                    if (!regex.test(phoneNumber)) 
-                    {
-                        alert('Невірний формат номеру телефона України! Будь ласка, введіть номер телефону у форматі +38XXXXXXXXXX ');
-                        document.getElementById('phoneNumberInput').value = '+38';
-                        return false;
-                    }
-
-                    return true;
-                }
-                function validateFields() 
-                {
-                    var phoneNumber = document.getElementById('phoneNumberInput').value;
-                    var name = document.getElementById('nameInput').value;
-
-
-                    if (validatePhoneNumber(phoneNumber) && name.trim() !== '') {
-                       
-                        document.getElementById('servicesBlock').removeAttribute('hidden');
-                    }
-                    else if (name.trim() === '') {
-                        alert('Пожалуйста, введите имя');
-                    }
-                }
-                function onPhoneNumberChanged(phoneNumber) {
-                    validatePhoneNumber(phoneNumber);
-                    checkIfUserCreated(phoneNumber);
-                }
-            </script>
-            <div id="servicesBlock" hidden>
+            @{
+                var phoneNumberClaim = User.FindFirst(System.Security.Claims.ClaimTypes.MobilePhone)?.Value;
+                var nameClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+            }
+            <div id="servicesBlock">
                 <div >
                     <label class="control-label">Послуги</label><br />
                     <select asp-items="Model.ServiceSelectList" class="form-control" onchange="SelectService(this); $('#dateBlock').attr('hidden',false)" id="ServicesToChoose" multiple></select><br />
@@ -234,13 +175,6 @@
             </div>
 
             <input type="submit" value="Підтвердити" id="submitButton" hidden />
-
-            @if (!string.IsNullOrEmpty(Model.NewRecord?.ClientInfo?.PhoneNumber))
-            {
-                <script>
-                    document.getElementById('servicesBlock').removeAttribute('hidden');
-                </script>
-            }
         </form>
     </div>
     </body>

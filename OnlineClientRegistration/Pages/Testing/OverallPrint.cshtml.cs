@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OnlineClientRegistration.DataModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using OnlineClientRegistration.Common.Security;
 
 namespace OnlineClientRegistration.Pages.Testing
 {
-    public class PrintModel : PageModel
+    [Authorize(Roles =AccessRoles.Admin)]
+    public class OverallPrintModel : PageModel
     {
         ApplicationDbContext context;
 
         public List<Record> Records { get; private set; } = new();
 
-        public PrintModel(ApplicationDbContext db)
+        public OverallPrintModel(ApplicationDbContext db)
         {
             context = db;
         }

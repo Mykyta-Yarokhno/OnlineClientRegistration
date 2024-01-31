@@ -6,16 +6,20 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System;
 using OnlineClientRegistration.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace OnlineClientRegistration.Pages.Testing
 {
     [IgnoreAntiforgeryToken]
+    [Authorize]
     public class CreateModel : PageModel
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserInfoService _userService;
+        private readonly UserService _userService;
 
-        public CreateModel(ApplicationDbContext db, UserInfoService userService)
+        public CreateModel(ApplicationDbContext db, UserService userService)
         {
             _context = db;
             _userService = userService;
@@ -30,8 +34,7 @@ namespace OnlineClientRegistration.Pages.Testing
         public SelectList ServiceSelectList { get; set; }
         public SelectList ChoosenServices { get; set; }
         public SelectList AvailableTimeRanges { get; set; }
-
-        public Client? currentClient;
+        
         public async Task<IActionResult> OnGetAsync()
         {
             var serviceTypes = await _context.ServiceTypes.ToListAsync();
@@ -42,23 +45,27 @@ namespace OnlineClientRegistration.Pages.Testing
 
         public async Task<IActionResult> OnPostAsync()
         {
+            if((User.Identity?.IsAuthenticated) != true)
+            {
+                return RedirectToPage("/Testing/Login");
+            }
+
             var selectedServiceTypeIds = Request.Form["NewRecord.ServicesRequested"];
 
             var selectedServiceTypes = _context.ServiceTypes
                 .Where(st => selectedServiceTypeIds.Contains(st.Id.ToString()))
                 .ToList();
 
+
+            NewRecord.ClientInfo = _userService.FindUser(User.FindFirst(System.Security.Claims.ClaimTypes.MobilePhone).Value);
             NewRecord.ServicesRequested = selectedServiceTypes;
             NewRecord.DateAndTime = new DateTime(DateSelected, TimeSelected);
 
-            var user = _userService.FindUser(NewRecord.ClientInfo.PhoneNumber);
-
-            if(user != null)
-            {
-                NewRecord.ClientInfo = user;
-            }
+            ModelState.ClearValidationState($"{nameof(NewRecord)}.{nameof(NewRecord.ClientInfo)}");
+            ModelState.MarkFieldValid($"{nameof(NewRecord)}.{nameof(NewRecord.ClientInfo)}");
 
             ChoosenServices = new SelectList(selectedServiceTypes, nameof(ServiceType.Id), nameof(ServiceType.Name));
+
 
             if (ModelState.IsValid)
             {
@@ -96,7 +103,7 @@ namespace OnlineClientRegistration.Pages.Testing
             _context.Records.Add(NewRecord);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage("/Testing/Print");
+            return RedirectToPage("/Testing/ClientPrint");
         }
     }
 }

@@ -9,9 +9,9 @@ namespace OnlineClientRegistration.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        private readonly UserInfoService _userInfoService;
+        private readonly UserService _userInfoService;
 
-        public UsersController( UserInfoService userInfoService)
+        public UsersController( UserService userInfoService)
         {
             _userInfoService = userInfoService;
         }

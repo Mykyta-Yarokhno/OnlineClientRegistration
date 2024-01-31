@@ -12,7 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite
     builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<TimeTableService>();
-builder.Services.AddScoped<UserInfoService>();
+builder.Services.AddScoped<UserService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -20,9 +20,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
+        options.LoginPath = new PathString("/Testing/Login");
         options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
         options.SlidingExpiration = true;
-        options.AccessDeniedPath = "/Forbidden/";
+        options.AccessDeniedPath = "/Error";
     });
 
 builder.Services.AddControllers();

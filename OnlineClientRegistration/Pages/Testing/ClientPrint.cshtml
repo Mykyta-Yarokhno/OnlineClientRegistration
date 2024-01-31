@@ -1,0 +1,27 @@
+﻿@page
+@model OnlineClientRegistration.Pages.Testing.ClientPrintModel
+@{
+}
+
+<h2>Список записей</h2>
+<p><a href="/Create">Добавить запись</a></p>
+<table class="table">
+    <tr><th>Дата</th><th>Час</th><th>Послуги</th></tr>
+    @foreach (var record in Model.Records)
+    {
+        <tr>
+            <td>@DateOnly.FromDateTime(record.DateAndTime)</td>
+            <td>@TimeOnly.FromDateTime(record.DateAndTime)</td>
+            <td>
+                @foreach (var service in record.ServicesRequested)
+                {
+                    @service.Name
+                    if (service != record.ServicesRequested.Last())
+                    {
+                        @:/
+                    }
+                }
+            </td>
+        </tr>
+    }
+</table>
