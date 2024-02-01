@@ -3,6 +3,40 @@
 @{
 }
 
+<style>
+    .even-row {
+        background-color: #FFD700;
+    }
+    .odd-row {
+        background-color: #00FF00;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var rows = document.querySelectorAll("table tr:not(:first-child)");
+
+        var currentColorClass = "odd-row";
+        var currentDate = null;
+
+        rows.forEach(function (row) {
+            var dateCell = row.cells[0]; 
+            var dateValue = dateCell.textContent.trim();
+
+            if (dateValue === currentDate) 
+            {
+                row.classList.add(currentColorClass);
+            } 
+            else 
+            {
+                currentDate = dateValue;
+                currentColorClass = (currentColorClass === "odd-row") ? "even-row" : "odd-row";
+                row.classList.add(currentColorClass);
+            }
+        });
+    });
+</script>
+
 <h2>Список записей</h2>
 <p><a href="/Create">Добавить запись</a></p>
 <table class = "table">

@@ -11,63 +11,10 @@
             <label>Номер телефону</label><br />
             <input type="tel" id="phoneNumber" name="phoneNumber" onchange="onPhoneNumberChanged(this.value);" required /><br />
             <label>Ім'я</label><br />
-            <input type="text" id="name" name="name" onchange="validateFields();" required /><br />
+            <input type="text" id="name" name="name" onchange="validateClientFields(this);" required  readonly ="readonly" /><br />
         </div>
-        <script>
-            function checkIfUserCreated(phoneNumber) {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/Users/user?phoneNumber=" + encodeURIComponent(phoneNumber),
-                    headers: {
-                        RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function (result, textStatus, jqXHR) {
-
-                        if (jqXHR.status == "204") {
-                            return;
-                        }
-
-                        var retrievedName = result.name;
-                        document.getElementById('name').value = retrievedName;
-                        validateFields();
-
-                    },
-                    error: function () {
-                        alert("there was an error");
-                    }
-                })
-            }
-            function validatePhoneNumber(phoneNumber) {
-                var regex = /^\+38[0-9]{10}$/;
-
-                if (!regex.test(phoneNumber)) {
-                    alert('Невірний формат номеру телефона України! Будь ласка, введіть номер телефону у форматі +38XXXXXXXXXX ');
-                    document.getElementById('phoneNumber').value = '+38';
-                    return false;
-                }
-
-                return true;
-            }
-            function validateFields() {
-                var phoneNumber = document.getElementById('phoneNumber').value;
-                var name = document.getElementById('name').value;
-
-
-                if (validatePhoneNumber(phoneNumber) && name.trim() !== '') {
-
-                    document.getElementById('submitButton').removeAttribute('hidden');
-                }
-                else if (name.trim() === '') {
-                    alert('Пожалуйста, введите имя');
-                }
-            }
-            function onPhoneNumberChanged(phoneNumber) {
-                validatePhoneNumber(phoneNumber);
-                checkIfUserCreated(phoneNumber);
-            }
-        </script>
-
-        <input type="submit" value="Підтвердити" id="submitButton"/>
+       
+        <input type="submit" value="Підтвердити" id="submitButtonLogin" hidden/>
         </form>
 </div>
 

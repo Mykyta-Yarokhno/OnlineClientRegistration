@@ -24,10 +24,19 @@
         <h2 >Запис</h2>
         <form method="post">
             @{
-                var phoneNumberClaim = User.FindFirst(System.Security.Claims.ClaimTypes.MobilePhone)?.Value;
-                var nameClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+                bool isManager = User.IsInRole(OnlineClientRegistration.Common.Security.AccessRoles.Manager);
+                string isHidden = isManager ? "hidden" : "";
+            }  
+            @if (isManager)
+            {
+                <label>Номер телефону</label><br />
+                <input asp-for="NewRecord.ClientInfo.PhoneNumber" type="tel" id="phoneNumber" onchange="onPhoneNumberChanged(this.value);" required /><br />
+                <label>Ім'я</label><br />
+                <input asp-for="NewRecord.ClientInfo.Name" type="text" id="name" onchange="validateClientFields();" required readonly ="readonly" />
+
+                <br />
             }
-            <div id="servicesBlock">
+            <div id="servicesBlock" @isHidden }>
                 <div >
                     <label class="control-label">Послуги</label><br />
                     <select asp-items="Model.ServiceSelectList" class="form-control" onchange="SelectService(this); $('#dateBlock').attr('hidden',false)" id="ServicesToChoose" multiple></select><br />

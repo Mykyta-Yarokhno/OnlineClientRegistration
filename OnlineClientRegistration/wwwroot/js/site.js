@@ -45,3 +45,71 @@ function UnselectService(service) {
 
 }
 
+function checkIfUserCreated(phoneNumber) {
+    $.ajax({
+        type: "GET",
+        url: "/api/Users/user?phoneNumber=" + encodeURIComponent(phoneNumber),
+        headers: {
+            RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val()
+        },
+        success: function (result, textStatus, jqXHR) {
+
+            document.getElementById('name').removeAttribute('hidden');
+
+            if (jqXHR.status == "204") {
+                document.getElementById('name').removeAttribute('readonly');
+                return;
+            }
+
+            var retrievedName = result.name;
+            document.getElementById('name').value = retrievedName;
+            document.getElementById('name').setAttribute('readonly', '');
+            validateClientFields();
+
+        },
+        error: function () {
+            alert("there was an error");
+        }
+    })
+}
+function validatePhoneNumber(phoneNumber) {
+                var regex = /^\+38[0-9]{10}$/;
+
+    if (!regex.test(phoneNumber)) {
+        alert('Невірний формат номеру телефона України! Будь ласка, введіть номер телефону у форматі +38XXXXXXXXXX ');
+    document.getElementById('phoneNumber').value = '+38';
+    return false;
+                }
+
+    return true;
+        }
+function validateClientFields() {
+    var phoneNumber = document.getElementById('phoneNumber').value;
+    var name = document.getElementById('name').value;
+
+
+    if (validatePhoneNumber(phoneNumber) && name.trim() !== ''){
+
+        var btnLogin = document.getElementById('submitButtonLogin');
+        var serviceBlock = document.getElementById('servicesBlock'); 
+
+        if (btnLogin != null) {
+            btnLogin.removeAttribute('hidden');
+        }
+        if (serviceBlock != null) {
+            serviceBlock.removeAttribute('hidden');
+        }
+
+       
+    }
+    else if (name.trim() === '') {
+        alert('Пожалуйста, введите имя');
+    }
+}
+function onPhoneNumberChanged(phoneNumber) {
+    validatePhoneNumber(phoneNumber);
+    checkIfUserCreated(phoneNumber);
+}
+
+
+

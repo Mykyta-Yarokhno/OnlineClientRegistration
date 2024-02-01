@@ -21,6 +21,7 @@ namespace OnlineClientRegistration.Pages.Testing
         public void OnGet()
         {
             Records = context.Records.AsNoTracking()
+                .OrderBy(record => record.DateAndTime)
                 .Include(record => record.ServicesRequested)
                 .Include(record => record.ClientInfo)
                 .ToList();

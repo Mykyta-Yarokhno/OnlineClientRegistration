@@ -8,11 +8,12 @@ using System;
 using OnlineClientRegistration.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.AspNetCore.Authorization;
+using OnlineClientRegistration.Common.Security;
+using System.Xml.Linq;
 
 
 namespace OnlineClientRegistration.Pages.Testing
 {
-    [IgnoreAntiforgeryToken]
     [Authorize]
     public class CreateModel : PageModel
     {
@@ -57,12 +58,35 @@ namespace OnlineClientRegistration.Pages.Testing
                 .ToList();
 
 
-            NewRecord.ClientInfo = _userService.FindUser(User.FindFirst(System.Security.Claims.ClaimTypes.MobilePhone).Value);
+            if(User.IsInRole(AccessRoles.Manager))
+            {
+                var user = _userService.FindUser(NewRecord.ClientInfo.PhoneNumber);
+
+                if (user == null)
+                {
+                    user = new Client
+                    {
+                        PhoneNumber = NewRecord.ClientInfo.PhoneNumber,
+                        Name = NewRecord.ClientInfo.Name
+                    };
+
+                    _context.Clients.Add(user);
+
+                    await _context.SaveChangesAsync();
+                }
+
+                NewRecord.ClientInfo = user;
+            }
+            else
+            {
+                NewRecord.ClientInfo = _userService.FindUser(User.FindFirst(System.Security.Claims.ClaimTypes.MobilePhone).Value);
+                ModelState.ClearValidationState($"{nameof(NewRecord)}.{nameof(NewRecord.ClientInfo)}");
+                ModelState.MarkFieldValid($"{nameof(NewRecord)}.{nameof(NewRecord.ClientInfo)}");
+            }
             NewRecord.ServicesRequested = selectedServiceTypes;
             NewRecord.DateAndTime = new DateTime(DateSelected, TimeSelected);
 
-            ModelState.ClearValidationState($"{nameof(NewRecord)}.{nameof(NewRecord.ClientInfo)}");
-            ModelState.MarkFieldValid($"{nameof(NewRecord)}.{nameof(NewRecord.ClientInfo)}");
+           
 
             ChoosenServices = new SelectList(selectedServiceTypes, nameof(ServiceType.Id), nameof(ServiceType.Name));
 
