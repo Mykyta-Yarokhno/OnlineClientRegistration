@@ -18,5 +18,10 @@ namespace OnlineClientRegistration.Common.Security
         {
             return claims.FindFirst(ClaimTypes.Role)?.Value == AccessRoles.Manager;
         }
+
+        public static string? GetRole(this IEnumerable<Claim> claims)
+        {
+            return claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role)?.Value;
+        }
     }
 }

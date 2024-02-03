@@ -38,23 +38,13 @@ namespace OnlineClientRegistration.Pages.Testing
 
             if (_userService.ValidateUser(phoneNumber))
             {
+                var role = GetUserRoleByMobilePhone(phoneNumber);
+
                 var claims = new List<Claim>
                 {
                     new(ClaimTypes.MobilePhone, phoneNumber),
-                    new(ClaimTypes.Name, name)
-                };
-
-                switch (phoneNumber)
-                {
-                    case "+381212121242":
-                        claims.Add(new(ClaimTypes.Role, AccessRoles.Admin));
-                        break;
-                    case "+381212121299":
-                        claims.Add(new(ClaimTypes.Role, AccessRoles.Manager));
-                        break;
-                    default:
-                        claims.Add(new(ClaimTypes.Role, AccessRoles.User));
-                        break;
+                    new(ClaimTypes.Name, name),
+                    new(ClaimTypes.Role, role)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -63,15 +53,42 @@ namespace OnlineClientRegistration.Pages.Testing
                 {
                     // Set properties as needed
                 };
+                
+                await HttpContext.SignOutAsync();
 
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties);
 
-                return RedirectToPage("/Testing/Create");
+                return RedirectToPage(GetUserStartPage(role));
             }
             return Page();
+        }
+
+        private string GetUserStartPage(string role)
+        {
+
+            switch (role) 
+            {
+                case AccessRoles.Admin:
+                case AccessRoles.Manager:
+                        return "/Testing/OverallPrint";
+                case AccessRoles.User:
+                        return "/Testing/Create";
+                default:
+                    return "/Testing/Login";
+            }
+        }
+
+        private string GetUserRoleByMobilePhone(string mobilePhone)
+        {
+            return mobilePhone switch
+            {
+                "+381212121242" => AccessRoles.Admin,
+                "+381212121299" => AccessRoles.Manager,
+                _ => AccessRoles.User,
+            };
         }
     }
 }

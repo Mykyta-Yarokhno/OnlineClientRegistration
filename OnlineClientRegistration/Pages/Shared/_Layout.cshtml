@@ -37,7 +37,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Testing/OverallPrint">Print</a>
                             </li>
                         }
-                        else
+                        else if(User.IsInRole(OnlineClientRegistration.Common.Security.AccessRoles.User))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-page="/Testing/Edit">Edit</a>
@@ -68,10 +68,6 @@
     .nav-item:hover .nav-link {
         transform: scale(1.3);
         transition: transform 0.3s ease; 
-    }
-
-    body {
-        background-color: rgba(201, 153, 106, 0.7);
     }
     </style>
 

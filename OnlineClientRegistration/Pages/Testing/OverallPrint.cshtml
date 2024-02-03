@@ -5,10 +5,10 @@
 
 <style>
     .even-row {
-        background-color: #FFD700;
+        background-color: rgba(0, 141, 90, 0.7);
     }
     .odd-row {
-        background-color: #00FF00;
+        background-color: rgba(107, 71, 156, 0.7);
     }
 </style>
 
@@ -20,15 +20,13 @@
         var currentDate = null;
 
         rows.forEach(function (row) {
-            var dateCell = row.cells[0]; 
+            var dateCell = row.cells[0];
             var dateValue = dateCell.textContent.trim();
 
-            if (dateValue === currentDate) 
-            {
+            if (dateValue === currentDate) {
                 row.classList.add(currentColorClass);
-            } 
-            else 
-            {
+            }
+            else {
                 currentDate = dateValue;
                 currentColorClass = (currentColorClass === "odd-row") ? "even-row" : "odd-row";
                 row.classList.add(currentColorClass);
@@ -40,11 +38,12 @@
 <h2>Список записей</h2>
 <p><a href="/Create">Добавить запись</a></p>
 <table class = "table">
-    <tr><th>Дата та час</th><th>Послуги</th><th>Номер телефону</th><th>Ім'я</th></tr>
+    <tr><th>Дата</th><th>Час</th><th>Послуги</th><th>Номер телефону</th><th>Ім'я</th></tr>
     @foreach (var record in Model.Records)
     {
         <tr>
-            <td >@record.DateAndTime</td>
+            <td>@DateOnly.FromDateTime(record.DateAndTime)</td>
+            <td>@TimeOnly.FromDateTime(record.DateAndTime)</td>
             <td>
                @foreach(var service in record.ServicesRequested)
                 {

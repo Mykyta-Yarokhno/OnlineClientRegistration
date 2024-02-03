@@ -16,9 +16,10 @@ html {
   position: relative;
   min-height: 100%;
 }
- 
+
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: rgba(201, 153, 106, 0.7);
 }
 
 .table {

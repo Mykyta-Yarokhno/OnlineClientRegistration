@@ -7,7 +7,7 @@ using OnlineClientRegistration.Common.Security;
 
 namespace OnlineClientRegistration.Pages.Testing
 {
-    [Authorize(Roles =AccessRoles.Admin)]
+    [Authorize(Roles = $"{AccessRoles.Manager},{AccessRoles.Admin}")]
     public class OverallPrintModel : PageModel
     {
         ApplicationDbContext context;
