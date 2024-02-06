@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using OnlineClientRegistration.Common.Security;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnlineClientRegistration.DataModels
 {
@@ -6,7 +8,8 @@ namespace OnlineClientRegistration.DataModels
     {
         [Key]
         public required string PhoneNumber { get; set; }
-        public  required string Name { get; set; } 
+        public  required string Name { get; set; }
+        public UserRole? UserRole { get; set; }
 
     }
 }

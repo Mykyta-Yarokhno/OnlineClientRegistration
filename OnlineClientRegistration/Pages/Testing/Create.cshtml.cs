@@ -127,6 +127,11 @@ namespace OnlineClientRegistration.Pages.Testing
             _context.Records.Add(NewRecord);
             await _context.SaveChangesAsync();
 
+            if (User.IsInRole(AccessRoles.Manager))
+            {
+                return RedirectToPage("/Testing/OverallPrint");
+            }
+
             return RedirectToPage("/Testing/ClientPrint");
         }
     }

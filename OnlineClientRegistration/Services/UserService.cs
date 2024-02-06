@@ -1,4 +1,5 @@
-﻿using OnlineClientRegistration.DataModels;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineClientRegistration.DataModels;
 
 namespace OnlineClientRegistration.Services
 {
@@ -13,12 +14,21 @@ namespace OnlineClientRegistration.Services
 
         public Client? FindUser(string phoneNumber)
         {
-            return _context.Clients.FirstOrDefault(client => client.PhoneNumber == phoneNumber);
+            return _context.Clients.Include(client => client.UserRole).FirstOrDefault(client => client.PhoneNumber == phoneNumber);
         }
 
         public bool ValidateUser(string phoneNumber)
         {
             return FindUser(phoneNumber) is not null;
+        }
+
+        public IEnumerable<Client> GetClients()
+        {
+            return _context.Clients
+                .AsNoTracking()
+                .Include(client => client.UserRole)
+                .Where(client => client.UserRole.Role == null)
+                .ToList();
         }
     }
 }

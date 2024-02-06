@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using OnlineClientRegistration.Common.Security;
+using System.Data;
 
 namespace OnlineClientRegistration.DataModels
 {
@@ -11,6 +14,7 @@ namespace OnlineClientRegistration.DataModels
         public DbSet<ServiceType> ServiceTypes => Set<ServiceType>();
         public DbSet<CustomTime> CustomTimes => Set<CustomTime>();
         public DbSet<CustomDate> CustomDates => Set<CustomDate>();
+        public DbSet<UserRole> UserRoles => Set<UserRole>();
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -46,6 +50,19 @@ namespace OnlineClientRegistration.DataModels
                 new CustomDate { Date = new DateOnly(2023,12,30), IsWorkingDay = false },
                 new CustomDate { Date = new DateOnly(2023,12,28), IsWorkingDay = true }
                 );
+
+            var admin = new Client { Name = "Mykyta", PhoneNumber = "+380971706617"};
+            var manager = new Client { Name = "Natasha", PhoneNumber = "+380961311033"};
+
+            modelBuilder.Entity<Client>().HasData(
+                admin,
+                manager
+                ); 
+
+            modelBuilder.Entity<UserRole>().HasData(
+                new UserRole { UserPhoneNumber = admin.PhoneNumber,  Role = AccessRoles.Admin },
+                new UserRole { UserPhoneNumber = manager.PhoneNumber,Role = AccessRoles.Manager }
+            );
         }
     }
 }

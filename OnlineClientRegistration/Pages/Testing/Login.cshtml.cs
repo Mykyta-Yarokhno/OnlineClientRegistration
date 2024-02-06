@@ -31,39 +31,36 @@ namespace OnlineClientRegistration.Pages.Testing
 
             if(user == null)
             {
-                _context.Clients.Add(new Client { PhoneNumber = phoneNumber, Name = name });
+                user = new Client { PhoneNumber = phoneNumber, Name = name };
+
+                _context.Clients.Add(user);
 
                 await _context.SaveChangesAsync();
             }
 
-            if (_userService.ValidateUser(phoneNumber))
+            var role = user.UserRole?.Role ?? AccessRoles.User;
+            var claims = new List<Claim>
             {
-                var role = GetUserRoleByMobilePhone(phoneNumber);
+                new(ClaimTypes.MobilePhone, phoneNumber),
+                new(ClaimTypes.Name, name),
+                new(ClaimTypes.Role, role)
+            };
 
-                var claims = new List<Claim>
-                {
-                    new(ClaimTypes.MobilePhone, phoneNumber),
-                    new(ClaimTypes.Name, name),
-                    new(ClaimTypes.Role, role)
-                };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                var authProperties = new AuthenticationProperties
-                {
-                    // Set properties as needed
-                };
+            var authProperties = new AuthenticationProperties
+            {
+                // Set properties as needed
+            };
                 
-                await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync();
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
 
-                return RedirectToPage(GetUserStartPage(role));
-            }
-            return Page();
+            return RedirectToPage(GetUserStartPage(role));
         }
 
         private string GetUserStartPage(string role)
@@ -73,22 +70,12 @@ namespace OnlineClientRegistration.Pages.Testing
             {
                 case AccessRoles.Admin:
                 case AccessRoles.Manager:
-                        return "/Testing/OverallPrint";
+                        return "/Testing/ClientsManagement";
                 case AccessRoles.User:
                         return "/Testing/Create";
                 default:
                     return "/Testing/Login";
             }
-        }
-
-        private string GetUserRoleByMobilePhone(string mobilePhone)
-        {
-            return mobilePhone switch
-            {
-                "+381212121242" => AccessRoles.Admin,
-                "+381212121299" => AccessRoles.Manager,
-                _ => AccessRoles.User,
-            };
         }
     }
 }

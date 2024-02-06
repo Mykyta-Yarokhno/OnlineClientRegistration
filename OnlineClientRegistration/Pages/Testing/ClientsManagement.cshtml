@@ -1,0 +1,49 @@
+﻿@page
+@model OnlineClientRegistration.Pages.Testing.ClientsManagementModel
+@{
+}
+
+<div id="searchForm" style="display: none;">
+    <div class="form-group">
+        <label for="phoneNumber">Номер телефону:</label>
+        <input type="tel" class="form-control" id="phoneNumber" name="PhoneNumber" onchange="validatePhoneNumber(this.value)" />
+    </div>
+    <button class="btn custom-btn" onclick="checkIfUserExist(document.getElementById('phoneNumber').value);">Знайти</button>
+</div>
+
+<table class="table">
+    <tr>
+        <th>Номер телефону</th>
+        <th>Ім'я</th>
+    </tr>
+    @foreach (var client in Model.Clients)
+    {
+        <tr>
+            <td>@client.PhoneNumber</td>
+            <td>@client.Name</td>
+        </tr>
+    }
+</table>
+
+<div style="position:fixed; bottom:0; padding: 10px;">
+    <button id="showSearchFormButton" class="btn custom-btn">Змінити права доступу</button>
+    <button id="showClientsButton" class="btn custom-btn">Список клієнтів</button>
+</div>
+
+<script>
+    document.getElementById("showSearchFormButton").addEventListener("click", function () {
+        var form = document.getElementById("searchForm");
+        if (form.style.display === "none") {
+            form.style.display = "block";
+        } else {
+            form.style.display = "none";
+        }
+
+        if (document.getElementById("infoTable").style.display === "block" || document.getElementById("ifNoUser").style.display === "block")
+        {
+            document.getElementById("infoTable").style.display = "none";
+            document.getElementById("ifNoUser").style.display = "none";
+        }
+    });
+</script>
+

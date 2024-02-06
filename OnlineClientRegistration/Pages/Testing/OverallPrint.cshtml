@@ -33,29 +33,60 @@
             }
         });
     });
+
+    function filterRecords() {
+        var selectedFilter = document.getElementById("recordFilter").value;
+        var rows = document.getElementsByClassName("recordTableRow");
+        var currentDate = new Date();
+
+        for (var i = 0; i < rows.length; i++) {
+            var rowDate = new Date(rows[i].getAttribute("data-date"));
+
+            if (selectedFilter === "all" ||
+                (selectedFilter === "active" && rowDate >= currentDate) ||
+                (selectedFilter === "ended" && rowDate < currentDate)) {
+                rows[i].style.display = "table-row";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+
+    }
 </script>
 
-<h2>Список записей</h2>
-<p><a href="/Create">Добавить запись</a></p>
-<table class = "table">
-    <tr><th>Дата</th><th>Час</th><th>Послуги</th><th>Номер телефону</th><th>Ім'я</th></tr>
-    @foreach (var record in Model.Records)
-    {
+<div>
+    <h2>Список записів</h2>
+    <p><a href="/Testing/Create">Додати запис</a></p>
+    <form id="filterForm">
+        <label for="recordFilter" style="font-weight: bold;">Записи:</label>
+        <select id="recordFilter" name="recordFilter" onchange="filterRecords()">
+            <option value="all">Усі записи</option>
+            <option value="ended">Завершені</option>
+            <option value="active">Активні</option>
+        </select>
+    </form>
+    <table class = "table">
         <tr>
-            <td>@DateOnly.FromDateTime(record.DateAndTime)</td>
-            <td>@TimeOnly.FromDateTime(record.DateAndTime)</td>
-            <td>
-               @foreach(var service in record.ServicesRequested)
-                {
-                    @service.Name
-                    if (service != record.ServicesRequested.Last())
-                    {
-                        @:/
-                    }
-                }
-            </td>
-            <td>@record.ClientInfo?.PhoneNumber</td>
-            <td>@record.ClientInfo?.Name</td>
+            <th>Дата</th><th>Час</th><th>Послуги</th><th>Номер телефону</th><th>Ім'я</th>
         </tr>
-    }
-</table>
+        @foreach (var record in Model.Records)
+        {
+            <tr class="recordTableRow" data-date="@record.DateAndTime.ToString("yyyy-MM-dd")">
+                <td>@DateOnly.FromDateTime(record.DateAndTime)</td>
+                <td>@TimeOnly.FromDateTime(record.DateAndTime)</td>
+                <td>
+                   @foreach(var service in record.ServicesRequested)
+                    {
+                        @service.Name
+                        if (service != record.ServicesRequested.Last())
+                        {
+                            @:/
+                        }
+                    }
+                </td>
+                <td>@record.ClientInfo?.PhoneNumber</td>
+                <td>@record.ClientInfo?.Name</td>
+            </tr>
+        }
+    </table>
+</div>
