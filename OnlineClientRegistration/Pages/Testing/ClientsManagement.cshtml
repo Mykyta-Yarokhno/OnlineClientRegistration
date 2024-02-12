@@ -1,49 +1,57 @@
 ﻿@page
 @model OnlineClientRegistration.Pages.Testing.ClientsManagementModel
 @{
+    var selectedClient = Model.Clients?.FirstOrDefault()?.PhoneNumber ?? "";
 }
 
-<div id="searchForm" style="display: none;">
-    <div class="form-group">
-        <label for="phoneNumber">Номер телефону:</label>
-        <input type="tel" class="form-control" id="phoneNumber" name="PhoneNumber" onchange="validatePhoneNumber(this.value)" />
-    </div>
-    <button class="btn custom-btn" onclick="checkIfUserExist(document.getElementById('phoneNumber').value);">Знайти</button>
-</div>
-
-<table class="table">
+<table class="table" id ="clientsTable" current-client ="@selectedClient">
     <tr>
         <th>Номер телефону</th>
         <th>Ім'я</th>
     </tr>
     @foreach (var client in Model.Clients)
     {
-        <tr>
+        <tr client-id="@client.PhoneNumber" class = "@(client.PhoneNumber == selectedClient ? "selected-row" : "")">
             <td>@client.PhoneNumber</td>
             <td>@client.Name</td>
         </tr>
     }
 </table>
 
+<input id="res"></input>
+
+<partial name="_ModalPartial" />
+
 <div style="position:fixed; bottom:0; padding: 10px;">
     <button id="showSearchFormButton" class="btn custom-btn">Змінити права доступу</button>
     <button id="showClientsButton" class="btn custom-btn">Список клієнтів</button>
+    <button id ="editClientButton" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#client-modal">Открыть модальное окно</button>
 </div>
 
 <script>
-    document.getElementById("showSearchFormButton").addEventListener("click", function () {
-        var form = document.getElementById("searchForm");
-        if (form.style.display === "none") {
-            form.style.display = "block";
-        } else {
-            form.style.display = "none";
-        }
+    $('#clientsTable tr').click(function () {
+       $('#clientsTable tr').removeClass('selected-row');
+       $(this).addClass('selected-row');
+       $('#res').val($(this).attr('client-id'));
+       $('#clientsTable').attr('current-client', $(this).attr('client-id'));
+   })
 
-        if (document.getElementById("infoTable").style.display === "block" || document.getElementById("ifNoUser").style.display === "block")
-        {
-            document.getElementById("infoTable").style.display = "none";
-            document.getElementById("ifNoUser").style.display = "none";
-        }
+   $('#editClientButton').click(() => {
+        const id = $('#clientsTable').attr('current-client');
+
+        fetch(`?handler=clientdetails&id=${id}`)
+        .then((response) => {
+            return response.text();
+        })
+        .then((result) => {
+            document.querySelector('.modal-body').innerHTML = result;
+        });
     });
 </script>
+
+<style>
+    .selected-row {
+        background-color: rgba(107, 71, 156, 0.7);
+    }
+</style>
 

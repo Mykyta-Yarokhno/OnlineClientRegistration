@@ -21,5 +21,11 @@ namespace OnlineClientRegistration.Pages.Testing
         {
             Clients = _userService.GetClients();
         }
+
+        public async Task<PartialViewResult> OnGetClientDetails(string id)
+        {
+            var client = _userService.FindUser(id);
+            return Partial("_ClientDetailsPartial", client);
+        }
     }
 }

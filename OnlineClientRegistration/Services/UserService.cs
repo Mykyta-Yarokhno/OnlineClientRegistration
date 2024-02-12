@@ -10,11 +10,17 @@ namespace OnlineClientRegistration.Services
         public UserService(ApplicationDbContext context)
         {
             _context = context;
-        }
+        } 
 
         public Client? FindUser(string phoneNumber)
         {
-            return _context.Clients.Include(client => client.UserRole).FirstOrDefault(client => client.PhoneNumber == phoneNumber);
+            var corectPhoneNumber = phoneNumber.Trim();
+            if (corectPhoneNumber[0] != '+')
+                corectPhoneNumber = '+' + corectPhoneNumber;
+
+            return _context.Clients
+                .Include(client => client.UserRole)
+                .FirstOrDefault(client => client.PhoneNumber == corectPhoneNumber);
         }
 
         public bool ValidateUser(string phoneNumber)
