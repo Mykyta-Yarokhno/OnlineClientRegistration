@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using OnlineClientRegistration.DataModels;
 using OnlineClientRegistration.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite
 
 builder.Services.AddScoped<TimeTableService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

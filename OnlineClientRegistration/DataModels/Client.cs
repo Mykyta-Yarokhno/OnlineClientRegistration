@@ -10,6 +10,7 @@ namespace OnlineClientRegistration.DataModels
         public required string PhoneNumber { get; set; }
         public  required string Name { get; set; }
         public UserRole? UserRole { get; set; }
+        public ClientNotes? Notes { get; set; }
 
     }
 }

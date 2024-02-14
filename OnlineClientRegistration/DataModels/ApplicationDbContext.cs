@@ -15,6 +15,7 @@ namespace OnlineClientRegistration.DataModels
         public DbSet<CustomTime> CustomTimes => Set<CustomTime>();
         public DbSet<CustomDate> CustomDates => Set<CustomDate>();
         public DbSet<UserRole> UserRoles => Set<UserRole>();
+        public DbSet<ClientNotes> ClientNotes => Set<ClientNotes>();
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -53,16 +54,22 @@ namespace OnlineClientRegistration.DataModels
 
             var admin = new Client { Name = "Mykyta", PhoneNumber = "+380971706617"};
             var manager = new Client { Name = "Natasha", PhoneNumber = "+380961311033"};
+            var testUser = new Client { Name = "Abobus", PhoneNumber = "+381231231212" };
 
             modelBuilder.Entity<Client>().HasData(
                 admin,
-                manager
+                manager,
+                testUser
                 ); 
 
             modelBuilder.Entity<UserRole>().HasData(
                 new UserRole { UserPhoneNumber = admin.PhoneNumber,  Role = AccessRoles.Admin },
                 new UserRole { UserPhoneNumber = manager.PhoneNumber,Role = AccessRoles.Manager }
             );
+
+            modelBuilder.Entity<ClientNotes>().HasData(
+                new ClientNotes { UserPhoneNumber = testUser.PhoneNumber, Note = "Amogus" }
+                );
         }
     }
 }

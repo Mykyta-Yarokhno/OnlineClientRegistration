@@ -26,5 +26,12 @@ namespace OnlineClientRegistration.Controllers
 
             return NoContent();
         }
+
+        /*[HttpPost("changeInfo")]
+        public IActionResult SaveClientDetails([FromBody] ClientDetailsModel clientDetails)
+        {
+            _userInfoService.ChangeInfo(phoneNumber, name, notes);
+            return Ok();
+        }*/
     }
 }

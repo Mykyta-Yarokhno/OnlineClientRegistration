@@ -2,30 +2,31 @@
 @model OnlineClientRegistration.Pages.Testing.ClientsManagementModel
 @{
     var selectedClient = Model.Clients?.FirstOrDefault()?.PhoneNumber ?? "";
+    
 }
 
 <table class="table" id ="clientsTable" current-client ="@selectedClient">
     <tr>
         <th>Номер телефону</th>
         <th>Ім'я</th>
+        <th>Нотатки</th>
     </tr>
     @foreach (var client in Model.Clients)
     {
         <tr client-id="@client.PhoneNumber" class = "@(client.PhoneNumber == selectedClient ? "selected-row" : "")">
             <td>@client.PhoneNumber</td>
             <td>@client.Name</td>
+            <td>@client.Notes?.Note</td>
         </tr>
     }
 </table>
 
-<input id="res"></input>
+<input id="res" value="@selectedClient"></input>
 
 <partial name="_ModalPartial" />
 
 <div style="position:fixed; bottom:0; padding: 10px;">
-    <button id="showSearchFormButton" class="btn custom-btn">Змінити права доступу</button>
-    <button id="showClientsButton" class="btn custom-btn">Список клієнтів</button>
-    <button id ="editClientButton" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#client-modal">Открыть модальное окно</button>
+    <button id="editClientButton" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#client-modal">Змінити</button>
 </div>
 
 <script>

@@ -1,8 +1,15 @@
 ﻿@model OnlineClientRegistration.DataModels.Client;
 
-<div>
-    <label>Номер телефону</label><br />
-    <input type="tel" id="phoneNumber" name="phoneNumber" value="@Model.PhoneNumber" /><br />
-    <label>Ім'я</label><br />
-    <input type="text" id="name" name="name" value ="@Model.Name" /><br />
-</div>
+<form method="post" id="formMethod">
+    <div>
+        <label>Номер телефону</label><br />
+        <input type="tel" id="phoneNumber" name="phoneNumber" value="@Model.PhoneNumber" /><br />
+        <label>Ім'я</label><br />
+        <input type="text" id="name" name="name" value="@Model.Name" /><br />
+        <label>Нотатки</label><br />
+        <input type="text" id="notes" name="notes" value="@Model.Notes?.Note" /><br />       
+    </div>
+</form>
+
+
+
