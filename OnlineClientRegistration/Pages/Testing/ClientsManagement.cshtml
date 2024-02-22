@@ -2,7 +2,10 @@
 @model OnlineClientRegistration.Pages.Testing.ClientsManagementModel
 @{
     var selectedClient = Model.Clients?.FirstOrDefault()?.PhoneNumber ?? "";
-    
+    if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
 }
 
 <table class="table" id ="clientsTable" current-client ="@selectedClient">
@@ -21,19 +24,18 @@
     }
 </table>
 
-<input id="res" value="@selectedClient"></input>
-
 <partial name="_ModalPartial" />
 
 <div style="position:fixed; bottom:0; padding: 10px;">
     <button id="editClientButton" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#client-modal">Змінити</button>
+    <button id="addClientButton" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#client-modal">Додати клієнта</button>
+    <button id="blockClientButton" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#client-modal">Додати у чорний список</button>
 </div>
 
 <script>
     $('#clientsTable tr').click(function () {
        $('#clientsTable tr').removeClass('selected-row');
        $(this).addClass('selected-row');
-       $('#res').val($(this).attr('client-id'));
        $('#clientsTable').attr('current-client', $(this).attr('client-id'));
    })
 
@@ -47,6 +49,30 @@
         .then((result) => {
             document.querySelector('.modal-body').innerHTML = result;
         });
+    });
+
+    $('#addClientButton').click(() => {
+        const id = $('#clientsTable').attr('current-client');
+
+        fetch(`?handler=addclient`)
+            .then((response) => {
+                return response.text();
+            })
+            .then((result) => {
+                document.querySelector('.modal-body').innerHTML = result;
+            });
+    });
+
+    $('#blockClientButton').click(() => {
+        const id = $('#clientsTable').attr('current-client');
+
+        fetch(`?handler=blockclient&id=${id}`)
+            .then((response) => {
+                return response.text();
+            })
+            .then((result) => {
+                document.querySelector('.modal-body').innerHTML = result;
+            });
     });
 </script>
 

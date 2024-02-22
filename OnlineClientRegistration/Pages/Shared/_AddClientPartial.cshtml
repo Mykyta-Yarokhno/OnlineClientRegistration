@@ -1,0 +1,12 @@
+﻿<form method="post" id="formMethod" asp-page-handler="AddForm">
+    <div>
+        <label>Номер телефону</label><br />
+        <input type="tel" id="phoneNumber" name="phoneNumber" onchange="validatePhoneNumber(this.value);" required /><br />
+        <label>Ім'я</label><br />
+        <input type="text" id="name" name="name" onchange="validateClientFields();" required /><br />
+        <label>Нотатки</label><br />
+        <input type="text" id="notes" name="notes" /><br />
+        <br />
+    </div>
+</form>
+

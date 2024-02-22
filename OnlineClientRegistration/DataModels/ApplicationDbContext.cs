@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using OnlineClientRegistration.Common.Security;
 using System.Data;
+using System.Reflection.Metadata;
 
 namespace OnlineClientRegistration.DataModels
 {
@@ -16,6 +17,7 @@ namespace OnlineClientRegistration.DataModels
         public DbSet<CustomDate> CustomDates => Set<CustomDate>();
         public DbSet<UserRole> UserRoles => Set<UserRole>();
         public DbSet<ClientNotes> ClientNotes => Set<ClientNotes>();
+        public DbSet<ClientBlackList> ClientBlackLists => Set<ClientBlackList>();
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -24,6 +26,24 @@ namespace OnlineClientRegistration.DataModels
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ClientBlackList>()
+               .Property(e => e.BlockedTime)
+               .HasColumnType("datetime")
+               .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            modelBuilder.Entity<ClientBlackList>(entity =>
+            {
+
+                entity.HasCheckConstraint("CheckOnlyOneColumnIsNotNull",
+                        "(ClientId IS NOT NULL AND UserPhoneNumber IS NULL) OR (UserPhoneNumber IS NOT NULL AND ClientId IS NULL)");
+
+                entity.HasIndex(e => e.UserPhoneNumber)
+                      .IsUnique();
+
+                entity.HasIndex(e => e.ClientId)
+                      .IsUnique();
+            });
+
             modelBuilder.Entity<ServiceType>().HasData(
                 new ServiceType { Id = 1, Name = "Манікюр (без покриття)", TimeRequired = 300, Price = 200 },
                 new ServiceType { Id = 2, Name = "Укріплення гелем", TimeRequired = 300, Price = 100 },
@@ -52,9 +72,9 @@ namespace OnlineClientRegistration.DataModels
                 new CustomDate { Date = new DateOnly(2023,12,28), IsWorkingDay = true }
                 );
 
-            var admin = new Client { Name = "Mykyta", PhoneNumber = "+380971706617"};
-            var manager = new Client { Name = "Natasha", PhoneNumber = "+380961311033"};
-            var testUser = new Client { Name = "Abobus", PhoneNumber = "+381231231212" };
+            var admin = new Client {Id = 3, Name = "Mykyta", PhoneNumber = "+380971706617"};
+            var manager = new Client { Id = 2, Name = "Natasha", PhoneNumber = "+380961311033"};
+            var testUser = new Client { Id = 1, Name = "Abobus", PhoneNumber = "+381231231212" };
 
             modelBuilder.Entity<Client>().HasData(
                 admin,
@@ -63,13 +83,9 @@ namespace OnlineClientRegistration.DataModels
                 ); 
 
             modelBuilder.Entity<UserRole>().HasData(
-                new UserRole { UserPhoneNumber = admin.PhoneNumber,  Role = AccessRoles.Admin },
-                new UserRole { UserPhoneNumber = manager.PhoneNumber,Role = AccessRoles.Manager }
+                new UserRole { ClientId = admin.Id,  Role = AccessRoles.Admin },
+                new UserRole { ClientId = manager.Id,Role = AccessRoles.Manager }
             );
-
-            modelBuilder.Entity<ClientNotes>().HasData(
-                new ClientNotes { UserPhoneNumber = testUser.PhoneNumber, Note = "Amogus" }
-                );
         }
     }
 }

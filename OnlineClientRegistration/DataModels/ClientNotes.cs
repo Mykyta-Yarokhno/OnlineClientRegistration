@@ -6,9 +6,9 @@ namespace OnlineClientRegistration.DataModels
     public class ClientNotes
     {
         [Key]
-        public string UserPhoneNumber { get; set; }
+        public int ClientId { get; set; }
 
-        [ForeignKey("UserPhoneNumber")]
+        [ForeignKey("ClientId")]
         public Client Client { get; set; }
         public  string? Note { get; set; }
     }

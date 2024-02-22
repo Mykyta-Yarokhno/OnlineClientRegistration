@@ -8,9 +8,9 @@ namespace OnlineClientRegistration.DataModels
     public class UserRole
     {
         [Key]
-        public string UserPhoneNumber { get; set; } 
+        public int ClientId { get; set; } 
 
-        [ForeignKey("UserPhoneNumber")]
+        [ForeignKey("ClientId")]
         public Client Client { get; set; }
         public required string Role { get; set; }
     }

@@ -1,0 +1,45 @@
+﻿@page
+@model OnlineClientRegistration.Pages.Testing.BlackListModel
+@{
+    if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+}
+
+<table class="table">
+    <tr>
+        <th>Номер телефону</th>
+        <th>Ім'я</th>
+        <th>Причина</th>
+        <th>Дата блокування</th>
+    </tr>
+    @foreach (var client in Model.Clients)
+    {
+        <tr >
+            <td>@client.UserPhoneNumber</td>
+            <td>@client.Name</td>
+            <td>@client.Reason</td>
+            <td>@client.BlockedTime.Date</td>
+        </tr>
+    }
+</table>
+
+<partial name="_ModalPartial" />
+
+<div style="position:fixed; bottom:0; padding: 10px;">
+    <button id="addClientButton" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#client-modal">Додати у чорний список</button>
+</div>
+
+<script>
+    $('#addClientButton').click(() => {
+
+        fetch(`?handler=addclient`)
+            .then((response) => {
+                return response.text();
+            })
+            .then((result) => {
+                document.querySelector('.modal-body').innerHTML = result;
+            });
+    });
+</script>

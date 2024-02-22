@@ -1,0 +1,11 @@
+﻿<form method="post" id="formMethod" asp-page-handler="AddForm">
+    <div>
+        <label>Номер телефону</label><br />
+        <input type="tel" id="phoneNumber" name="phoneNumber" onchange="validatePhoneNumber(this.value);" required /><br />
+        <label>Ім'я</label><br />
+        <input type="text" id="name" name="name" onchange="validateClientFields();" reqired/><br />
+        <label>Причина</label><br />
+        <input type="text" id="BlockedReason" name="BlockedReason" required /><br />
+        <br />
+    </div>
+</form>

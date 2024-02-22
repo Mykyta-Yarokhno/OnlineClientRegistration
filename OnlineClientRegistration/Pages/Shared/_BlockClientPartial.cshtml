@@ -1,0 +1,13 @@
+﻿@model OnlineClientRegistration.DataModels.Client;
+
+<form method="post" id="formMethod" asp-page-handler="BlockForm">
+    <div>
+        <label>Номер телефону</label><br />
+        <input type="tel" id="phoneNumber" name="phoneNumber" value="@Model.PhoneNumber" readonly="readonly" /><br />
+        <label>Ім'я</label><br />
+        <input type="text" id="name" name="name" value="@Model.Name" readonly="readonly" /><br />
+        <label>Причина</label><br />
+        <input type="text" id="BlockedReason" name="BlockedReason" required /><br />
+        <br/>
+    </div>
+</form>

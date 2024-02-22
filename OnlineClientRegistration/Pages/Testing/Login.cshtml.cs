@@ -7,6 +7,7 @@ using OnlineClientRegistration.DataModels;
 using OnlineClientRegistration.Services;
 using System.Security.Claims;
 using OnlineClientRegistration.Common.Security;
+using Microsoft.EntityFrameworkCore;
 
 namespace OnlineClientRegistration.Pages.Testing
 {
@@ -27,6 +28,12 @@ namespace OnlineClientRegistration.Pages.Testing
 
         public async Task<IActionResult> OnPostAsync(string phoneNumber, string name)
         {
+
+            if( await _userService.IsClientBlocked(phoneNumber))
+            {
+                return RedirectToPage("/Testing/Oops");
+            }
+
             var user = _userService.FindUser(phoneNumber);
 
             if(user == null)
