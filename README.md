@@ -30,8 +30,8 @@ To get started with this project, follow these steps:
 1. **Clone the Repository**
 
     ```bash
-    git clone https://github.com/yourusername/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/Mykyta-Yarokhno/OnlineClientRegistration.git
+    cd OnlineClientRegistration
     ```
 2. **Restore NuGet Packages**
 
